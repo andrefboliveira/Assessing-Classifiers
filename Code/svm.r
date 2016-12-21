@@ -1,12 +1,13 @@
+# install.packages("e1071")
 library("e1071")
 
-rm(list=ls())
+rm(list=ls(all = TRUE))
 
-round0 <- function(val) {
+unit_round <- function(val) {
     return(round(val, digits=0))
 }
 
-cnterr <- function(V1, V2) {
+count_err <- function(V1, V2) {
     cnt <- 0
     for(i in 1:length(V1)) {
         if ( (V1[i] == "0" && V2[i] == "2") ||
@@ -17,8 +18,23 @@ cnterr <- function(V1, V2) {
     return(cnt)
 }
 
-df <- read.csv("./tic-tac-toe.csv")
-df$Y <- factor(df$Y)
+
+credit_data_df <- read.csv("./Dataset/project-default-credit-card-clients.csv", sep = ";", header = TRUE)
+
+# Checking to see if there is any missing data
+sapply(credit_data_df, function(x) sum(is.na(x)))
+
+Y <- "default.payment.next.month"
+X <- "ID"
+
+names <- names(credit_data_df)
+use_names <- names(credit_data_df[!names %in% c(Y, X)])
+
+f <- as.formula(paste(paste(Y, "~"),
+                      paste(use_names, collapse=" + ")))
+
+
+df[Y] <- factor(df[Y])
 index <- 1:nrow(df)
 testindex <- sample(index, trunc(length(index)/3))
 testdata <- na.omit(df[testindex,])

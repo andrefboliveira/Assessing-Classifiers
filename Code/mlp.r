@@ -1,7 +1,7 @@
 # install.packages("neuralnet")
 library("neuralnet")
 
-rm(list=ls())
+rm(list=ls(all = TRUE))
 
 unit_round <- function(val) {
     return(round(val, digits=0))
@@ -25,6 +25,7 @@ index <- 1:nrow(credit_data_df)
 testindex <- sample(index, trunc(length(index)/3))
 test <- na.omit(credit_data_df[testindex,])
 train <- na.omit(credit_data_df[-testindex,])
+
 Y <- "default.payment.next.month"
 X <- "ID"
 
