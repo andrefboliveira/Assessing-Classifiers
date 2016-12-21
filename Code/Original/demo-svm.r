@@ -17,7 +17,7 @@ cnterr <- function(V1, V2) {
     return(cnt)
 }
 
-df <- read.csv("./default-of-credit-card-clients.xls")
+df <- read.csv("./tic-tac-toe.csv")
 df$Y <- factor(df$Y)
 index <- 1:nrow(df)
 testindex <- sample(index, trunc(length(index)/3))

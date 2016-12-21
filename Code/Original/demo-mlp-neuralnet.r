@@ -14,7 +14,7 @@ cnterr <- function(V) {
     return(cnt)
 }
 
-df <- read.csv("/Users/taniamaldonado/Desktop/Bioinformática/1º Semestre/Aprendizagem Automática/Assessing-Classifiers")
+df <- read.csv("./tic-tac-toe.csv")
 index <- 1:nrow(df)
 testindex <- sample(index, trunc(length(index)/3))
 testdata <- na.omit(df[testindex,])
