@@ -20,11 +20,11 @@ credit_data_df <- read.csv("./Dataset/project-default-credit-card-clients.csv", 
 # Checking to see if there is any missing data
 sapply(credit_data_df, function(x) sum(is.na(x)))
 
-
+# Splitting data into Testing and Training data set
 index <- 1:nrow(credit_data_df)
-testindex <- sample(index, trunc(length(index)/3))
-test <- na.omit(credit_data_df[testindex,])
-train <- na.omit(credit_data_df[-testindex,])
+trainindex <- sample(index, trunc(0.75*nrow(credit_data_df)))
+train <- na.omit(credit_data_df[trainindex,])
+test <- na.omit(credit_data_df[-trainindex,])
 
 Y <- "default.payment.next.month"
 X <- "ID"
@@ -35,14 +35,13 @@ use_names <- names(credit_data_df[!names %in% c(Y, X)])
 f <- as.formula(paste(paste(Y, "~"),
                       paste(use_names, collapse=" + ")))
 
-## Train MLP with neuralnet:
-nn <- neuralnet(f, data=train, hidden=(5), act.fct="logistic", linear.output=TRUE, threshold=0.05)
+# Train MLP with neuralnet:
+nn <- neuralnet(f, data=train, hidden=(2), act.fct="logistic", linear.output=TRUE, threshold=0.1)
 
 print(nn)
 plot(nn)
 
 # Test MLP
- 
 cmpv<-data.frame(actual=train$default.payment.next.month,predicted=nn$net.result)
 names(cmpv) <- sub("^structure.*", "predicted", names(cmpv))
 print(cmpv)
@@ -54,7 +53,7 @@ predres <- apply(nn.pred, MARGIN=2, FUN=unit_round)
 cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
 
 
-
+# Returns number of errors
 nerr <- count_err(cmpdata$actual-cmpdata$predicted)
 errprct <- round(nerr/length(cmpdata$actual)*100, digits=2)
 cat(sprintf("Percent errors: %f\n", errprct))

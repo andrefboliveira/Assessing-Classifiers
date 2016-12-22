@@ -68,22 +68,34 @@ run_MLP <- function(credit_data_df, do_plot, hidden_units, test_sample_size, mlp
 
 credit_data_df <- read.csv("./Dataset/project-default-credit-card-clients.csv", sep = ";", header = TRUE)
 do_plot <- FALSE
-hidden_units <- 1
-test_sample_size <- 0.25
-mlp_threshold <- 0.05
+hidden_units <- c(4,0)
+test_sample_size <- 1/3
+mlp_threshold <- 0.2
 
-#run_MLP (credit_data_df, do_plot, hidden_units, test_sample_size, mlp_threshold)
+run_MLP (credit_data_df, do_plot, hidden_units, test_sample_size, mlp_threshold)
+
 no_stop <- TRUE
 best_result <- -Inf
-camadas <- c()
+cam1 <- c()
+cam2 <- c()
 erro <- c()
 
 
-while(hidden_units < 30) {
-  print(hidden_units)
-  hidden_units <- hidden_units + 1
-  result <- run_MLP (credit_data_df, do_plot, hidden_units, test_sample_size, mlp_threshold)
- 
-  camadas <- c(camadas, hidden_units)
-  erro <- c(erro, result) 
+while(hidden_units[1] < 25) {
+  hidden_units[1] <- hidden_units[1] + 1
+  hidden_units[2] <- 1
+  while (hidden_units[2] < 25) {
+    print(hidden_units)
+    hidden_units[2] <- hidden_units[2] + 1
+    result <-
+      run_MLP (credit_data_df,
+               do_plot,
+               hidden_units,
+               test_sample_size,
+               mlp_threshold)
+
+    cam1 <- c(cam1, hidden_units[1])
+    cam2 <- c(cam2, hidden_units[2])
+    erro <- c(erro, result)
+  }
 }

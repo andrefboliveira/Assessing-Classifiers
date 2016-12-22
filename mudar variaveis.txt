@@ -1,0 +1,7 @@
+
+credit_data_df$SEX<- ifelse(credit_data_df$SEX==1, "male", ifelse(credit_data_df$SEX==2, "female",""))
+factor(credit_data_df$SEX)
+credit_data_df$EDUCATION <- ifelse(credit_data_df$EDUCATION==1, "graduate school", ifelse(credit_data_df$EDUCATION==2, "university", ifelse(credit_data_df$EDUCATION==3, "high school", "others")))
+factor(credit_data_df$EDUCATION)
+credit_data_df$MARRIAGE <- ifelse(credit_data_df$MARRIAGE==1, "married", ifelse(credit_data_df$MARRIAGE==2, "single", ifelse(credit_data_df$MARRIAGE==3, "divorce", "others")))
+factor(credit_data_df$MARRIAGE)

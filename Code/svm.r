@@ -35,20 +35,22 @@ f <- as.formula(paste(paste(Y, "~"),
 
 
 credit_data_df$default.payment.next.month <- factor(credit_data_df$default.payment.next.month)
+
+# Splitting data into Testing and Training data set
 index <- 1:nrow(credit_data_df)
-testindex <- sample(index, trunc(length(index)/3))
-test <- na.omit(credit_data_df[testindex,])
-train <- na.omit(credit_data_df[-testindex,])
+trainindex <- sample(index, trunc(0.75*nrow(credit_data_df)))
+train <- na.omit(credit_data_df[trainindex,])
+test <- na.omit(credit_data_df[-trainindex,])
 
 ## Train SVM with e1071:
-x <- subset(train, select = -c(default.payment.next.month, ID))
+x <- subset(train, select = use_names)
 y <- train$default.payment.next.month
-model <- svm(x, y, type="C-classification", kernel="sigmoid", cost=1000)
+model <- svm(x, y, type="C-classification", kernel="polynomial", cost=10)
 print(model)
 summary(model)
 
 ## Test with test data
-xte <- subset(test, select = -c(default.payment.next.month, ID))
+xte <- subset(test, select = use_names)
 pred <- cbind(predict(model, xte))
 ## (same as:)
 ##pred <- fitted(model)
