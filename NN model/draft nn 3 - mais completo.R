@@ -20,6 +20,9 @@ cnterr <- function(V) {
 credit_data_df <- read.csv("/Users/taniamaldonado/Desktop/Bioinformática/1º Semestre/Aprendizagem Automática/Assessing-Classifiers/project-default-credit-card-clients.csv", sep = ";", header = TRUE)
 credit_data_df = credit_data_df[-2,]
 
+# Fixing what appears to be a typo in the field header PAY_0
+names(credit_data_df)[names(credit_data_df) == "PAY_0"] <- "PAY_1"  
+
 ## Checking to see if there is any missing data
 sapply(credit_data_df, function(x) sum(is.na(x)))
 
