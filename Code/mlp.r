@@ -38,12 +38,12 @@ f <- as.formula(paste(paste(Y, "~"),
 ## Train MLP with neuralnet:
 nn <- neuralnet(f, data=train, hidden=(5), act.fct="logistic", linear.output=TRUE, threshold=0.05)
 
-#print(nn)
-#plot(nn)
+print(nn)
+plot(nn)
 
 # Test MLP
  
-cmpv<-data.frame(actual=train[Y],predicted=nn$net.result)
+cmpv<-data.frame(actual=train$default.payment.next.month,predicted=nn$net.result)
 names(cmpv) <- sub("^structure.*", "predicted", names(cmpv))
 print(cmpv)
 
@@ -51,8 +51,7 @@ tstdata <- subset(test, select = use_names)
 nn.pred <- compute(nn, tstdata)$net.result
 
 predres <- apply(nn.pred, MARGIN=2, FUN=unit_round)
-cmpdata <- data.frame(test[Y], predres)
-names(cmpdata) <- c("actual", "predicted")
+cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
 
 
 

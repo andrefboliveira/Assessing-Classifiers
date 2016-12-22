@@ -34,28 +34,29 @@ f <- as.formula(paste(paste(Y, "~"),
                       paste(use_names, collapse=" + ")))
 
 
-df[Y] <- factor(df[Y])
-index <- 1:nrow(df)
+credit_data_df$default.payment.next.month <- factor(credit_data_df$default.payment.next.month)
+index <- 1:nrow(credit_data_df)
 testindex <- sample(index, trunc(length(index)/3))
-testdata <- na.omit(df[testindex,])
-traindata <- na.omit(df[-testindex,])
+test <- na.omit(credit_data_df[testindex,])
+train <- na.omit(credit_data_df[-testindex,])
 
 ## Train SVM with e1071:
-x <- subset(traindata, select = -Y)
-y <- traindata$Y
-model <- svm(x, y, type="C-classification", kernel="radial", cost=1000)
+x <- subset(train, select = -c(default.payment.next.month, ID))
+y <- train$default.payment.next.month
+model <- svm(x, y, type="C-classification", kernel="sigmoid", cost=1000)
 print(model)
 summary(model)
 
 ## Test with test data
-xte <- subset(testdata, select = -Y)
+xte <- subset(test, select = -c(default.payment.next.month, ID))
 pred <- cbind(predict(model, xte))
 ## (same as:)
 ##pred <- fitted(model)
 
 predres <- factor(pred)  ## pred in (1,2)
-cmpdata <- data.frame(actual=testdata$Y, predicted=predres)
+cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
 
-nerr <- cnterr(cmpdata$actual,cmpdata$predicted)
+
+nerr <- count_err(cmpdata$actual,cmpdata$predicted)
 errprct <- round(nerr/length(cmpdata$actual)*100, digits=2)
 cat(sprintf("Percent errors: %f\n", errprct))

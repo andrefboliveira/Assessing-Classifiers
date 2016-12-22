@@ -11,7 +11,7 @@ count_err <- function(V1, V2) {
     cnt <- 0
     for(i in 1:length(V1)) {
         if (V1[i] != V2[i])  {
-            #cat(sprintf("%d: %s vs %s\n", i, V1[i], V2[i]));
+            cat(sprintf("%d: %s vs %s\n", i, V1[i], V2[i]));
             cnt <- cnt+1; }
     }
     return(cnt)
@@ -46,8 +46,7 @@ tstdata <- subset(test, select = use_names)
 
 pred <- cbind(predict(model, tstdata))
 predres <-  apply(pred, MARGIN=2, FUN=unit_round)
-cmpdata <- data.frame(test[Y], predres)
-names(cmpdata) <- c("actual", "predicted")
+cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
 
 nerr <- count_err(cmpdata$actual, cmpdata$predicted)
 errprct <- round(nerr/length(cmpdata$actual)*100, digits=2)
