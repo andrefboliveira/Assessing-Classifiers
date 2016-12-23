@@ -39,13 +39,12 @@ no_data <- subset(credit_data_df, default.payment.next.month==0)
 proportion_yes <- nrow(yes_data)/nrow(credit_data_df)
 
 perct_train <- 2/3
-size <- perct_train
 
-train_yes_index <- sample(1:nrow(yes_data), trunc(size*nrow(yes_data)))
+train_yes_index <- sample(1:nrow(yes_data), trunc((perct_train/2)*nrow(yes_data)))
 train_yes_data <- na.omit(yes_data[train_yes_index,])
 test_yes_data <- na.omit(yes_data[-train_yes_index,])
 
-train_no_index <- sample(1:nrow(no_data), trunc(size*nrow(no_data)))
+train_no_index <- sample(1:nrow(no_data), trunc((perct_train/2)*nrow(no_data)))
 train_no_data <- na.omit(no_data[train_no_index,])
 test_no_data <- na.omit(no_data[-train_no_index,])
 
@@ -56,7 +55,7 @@ train_data <- rbind.data.frame(train_no_data, train_yes_data)
 
 
 # Train MLP with neuralnet:
-nn <- neuralnet(f, data=train_data, hidden=c(9), act.fct="logistic", linear.output=FALSE, threshold=0.1)
+nn <- neuralnet(f, data=train_data, hidden=c(9,4), act.fct="logistic", linear.output=FALSE, threshold=0.1)
 
 # print(nn)
 # plot(nn)
