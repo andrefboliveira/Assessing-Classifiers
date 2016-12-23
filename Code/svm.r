@@ -50,8 +50,8 @@ test_data <- na.omit(credit_data_df[-train_index,])
 ## Train SVM with e1071:
 x <- subset(train_data, select = use_names)
 y <- train_data$default.payment.next.month
-# model <- svm(x, y, type="C-classification", kernel="polynomial", cost=10)
-model <- svm(x, y, type="C-classification", kernel="radial", cost=1000)
+ model <- svm(x, y, type="C-classification", kernel="polynomial", cost=10)
+# model <- svm(x, y, type="C-classification", kernel="radial", cost=1000)
 
 print(model)
 summary(model)

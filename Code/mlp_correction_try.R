@@ -55,7 +55,7 @@ train_data <- rbind.data.frame(train_no_data, train_yes_data)
 
 
 # Train MLP with neuralnet:
-nn <- neuralnet(f, data=train_data, hidden=c(9,4), act.fct="logistic", linear.output=FALSE, threshold=0.1)
+nn <- neuralnet(f, data=train_data, hidden=c(10,6,2), act.fct="logistic", linear.output=FALSE, threshold=0.1)
 
 # print(nn)
 # plot(nn)
