@@ -7,15 +7,15 @@ source("./Code/f_measure.R")
 
 
 unit_round <- function(val) {
-    return(round(val, digits=0))
+  return(round(val, digits=0))
 }
 
 count_err <- function(V) {
-    cnt <- 0
-    for(i in 1:length(V)) {
-        if (V[i] != 0) { cnt <- cnt+1; }
-    }
-    return(cnt)
+  cnt <- 0
+  for(i in 1:length(V)) {
+    if (V[i] != 0) { cnt <- cnt+1; }
+  }
+  return(cnt)
 }
 
 credit_data_df <- read.csv("./Dataset/project-default-credit-card-clients.csv", sep = ";", header = TRUE)
@@ -24,11 +24,6 @@ credit_data_df <- read.csv("./Dataset/project-default-credit-card-clients.csv", 
 sapply(credit_data_df, function(x) sum(is.na(x)))
 
 # Splitting data into Testing and Training data set
-index <- 1:nrow(credit_data_df)
-trainindex <- sample(index, trunc(0.75*nrow(credit_data_df)))
-train <- na.omit(credit_data_df[trainindex,])
-test <- na.omit(credit_data_df[-trainindex,])
-
 Y <- "default.payment.next.month"
 X <- "ID"
 
@@ -38,22 +33,43 @@ use_names <- names(credit_data_df[!names %in% c(Y, X)])
 f <- as.formula(paste(paste(Y, "~"),
                       paste(use_names, collapse=" + ")))
 
+
+yes_data <- subset(credit_data_df, default.payment.next.month==1)
+no_data <- subset(credit_data_df, default.payment.next.month==0)
+proportion_yes <- nrow(yes_data)/nrow(credit_data_df)
+
+perct_train <- 2/3
+
+train_yes_index <- sample(1:nrow(yes_data), trunc((perct_train/2)*nrow(yes_data)))
+train_yes_data <- na.omit(yes_data[train_yes_index,])
+test_yes_data <- na.omit(yes_data[-train_yes_index,])
+
+train_no_index <- sample(1:nrow(no_data), trunc((perct_train/2)*nrow(no_data)))
+train_no_data <- na.omit(no_data[train_no_index,])
+test_no_data <- na.omit(no_data[-train_no_index,])
+
+
+test_data <- rbind.data.frame(test_no_data, test_yes_data)
+train_data <- rbind.data.frame(train_no_data, train_yes_data)
+
+
+
 # Train MLP with neuralnet:
-nn <- neuralnet(f, data=train, hidden=(5), act.fct="logistic", linear.output=TRUE, threshold=0.1)
+nn <- neuralnet(f, data=train_data, hidden=c(10,6,2), act.fct="logistic", linear.output=FALSE, threshold=0.1)
 
 print(nn)
 plot(nn)
 
 # Test MLP
-cmpv<-data.frame(actual=train$default.payment.next.month,predicted=nn$net.result)
+cmpv<-data.frame(actual=train_data$default.payment.next.month,predicted=nn$net.result)
 names(cmpv) <- sub("^structure.*", "predicted", names(cmpv))
 print(cmpv)
 
-tstdata <- subset(test, select = use_names)
+tstdata <- subset(test_data, select = use_names)
 nn.pred <- compute(nn, tstdata)$net.result
 
 predres <- apply(nn.pred, MARGIN=2, FUN=unit_round)
-cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
+cmpdata <- data.frame(actual=test_data$default.payment.next.month, predicted=predres)
 
 
 # Returns number of errors

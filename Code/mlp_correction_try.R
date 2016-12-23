@@ -57,13 +57,13 @@ train_data <- rbind.data.frame(train_no_data, train_yes_data)
 # Train MLP with neuralnet:
 nn <- neuralnet(f, data=train_data, hidden=c(10,6,2), act.fct="logistic", linear.output=FALSE, threshold=0.1)
 
-# print(nn)
-# plot(nn)
+print(nn)
+plot(nn)
 
 # Test MLP
 cmpv<-data.frame(actual=train_data$default.payment.next.month,predicted=nn$net.result)
 names(cmpv) <- sub("^structure.*", "predicted", names(cmpv))
-#print(cmpv)
+print(cmpv)
 
 tstdata <- subset(test_data, select = use_names)
 nn.pred <- compute(nn, tstdata)$net.result

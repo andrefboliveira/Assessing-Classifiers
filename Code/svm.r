@@ -60,8 +60,6 @@ summary(model)
 ## Test with test data
 xte <- subset(test_data, select = use_names)
 pred <- cbind(predict(model, xte))
-## (same as:)
-##pred <- fitted(model)
 
 # Coorrection of output of SVM
 pred[pred==1] <- 0
