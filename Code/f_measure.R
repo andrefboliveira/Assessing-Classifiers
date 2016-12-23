@@ -8,5 +8,5 @@ analyzeCM <- function(observed, predicted){
   prec <- confusion_matrix[2,2]/sum(confusion_matrix[2,])
   rec <- confusion_matrix[2,2]/sum(confusion_matrix[,2])
   f1 <- 2*((prec*rec)/(prec+rec))
-  cat("Precision: ", prec, "; Recall: ", rec, "; f-measure", f1)
+  cat("Precision: ", prec, "; Recall: ", rec, "; F-measure:", f1)
 }
