@@ -3,6 +3,8 @@ library("rpart")
 
 rm(list=ls(all = TRUE))
 
+source("./Code/f_measure.R")
+
 # Rounding the error value
 unit_round <- function(val) {
     return(round(val, digits=0))
@@ -68,3 +70,4 @@ cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
 nerr <- count_err(cmpdata$actual, cmpdata$predicted)
 errprct <- round(nerr/length(cmpdata$actual)*100, digits=2)
 cat(sprintf("Percent errors: %f\n", errprct))
+analyzeCM(cmpdata$actual, cmpdata$predicted)

@@ -3,6 +3,9 @@ library("neuralnet")
 
 rm(list=ls(all = TRUE))
 
+source("./Code/f_measure.R")
+
+
 unit_round <- function(val) {
     return(round(val, digits=0))
 }
@@ -36,7 +39,7 @@ f <- as.formula(paste(paste(Y, "~"),
                       paste(use_names, collapse=" + ")))
 
 # Train MLP with neuralnet:
-nn <- neuralnet(f, data=train, hidden=(2), act.fct="logistic", linear.output=TRUE, threshold=0.1)
+nn <- neuralnet(f, data=train, hidden=(5), act.fct="logistic", linear.output=TRUE, threshold=0.1)
 
 print(nn)
 plot(nn)
@@ -57,3 +60,4 @@ cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
 nerr <- count_err(cmpdata$actual-cmpdata$predicted)
 errprct <- round(nerr/length(cmpdata$actual)*100, digits=2)
 cat(sprintf("Percent errors: %f\n", errprct))
+analyzeCM(cmpdata$actual, cmpdata$predicted)
