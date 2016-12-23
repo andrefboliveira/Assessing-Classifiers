@@ -10,16 +10,17 @@ unit_round <- function(val) {
     return(round(val, digits=0))
 }
 
+# Comparing error values
 count_err <- function(V1, V2) {
-    cnt <- 0
-    for(i in 1:length(V1)) {
-        if ( (V1[i] == "0" && V2[i] == "2") ||
-             (V1[i] == "1" && V2[i] == "1") ) {
-            cat(sprintf("%d: %s vs %s\n", i, V1[i], V2[i]));
-            cnt <- cnt+1; }
-    }
-    return(cnt)
+  cnt <- 0
+  for(i in 1:length(V1)) {
+    if (V1[i] != V2[i])  {
+      cat(sprintf("%d: %s vs %s\n", i, V1[i], V2[i]));
+      cnt <- cnt+1; }
+  }
+  return(cnt)
 }
+
 
 
 credit_data_df <- read.csv("./Dataset/project-default-credit-card-clients.csv", sep = ";", header = TRUE)
@@ -50,8 +51,8 @@ test_data <- na.omit(credit_data_df[-train_index,])
 ## Train SVM with e1071:
 x <- subset(train_data, select = use_names)
 y <- train_data$default.payment.next.month
- model <- svm(x, y, type="C-classification", kernel="polynomial", cost=10)
-# model <- svm(x, y, type="C-classification", kernel="radial", cost=1000)
+
+model <- svm(x, y, type="C-classification", kernel="polynomial", cost=10)
 
 print(model)
 summary(model)
@@ -62,7 +63,11 @@ pred <- cbind(predict(model, xte))
 ## (same as:)
 ##pred <- fitted(model)
 
-predres <- factor(pred)  ## pred in (1,2)
+# Coorrection of output of SVM
+pred[pred==1] <- 0
+pred[pred==2] <- 1
+
+predres <- factor(pred)
 cmpdata <- data.frame(actual=test_data$default.payment.next.month, predicted=predres)
 
 
