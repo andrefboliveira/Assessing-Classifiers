@@ -58,9 +58,6 @@ plot(model, uniform = TRUE, branch = 0.6, margin = 0.05)
 text(model, use.n = TRUE)
 title("Default Payment Next Month")
 
-plot(model, compress=TRUE)
-text(model, use.n = TRUE)
-
 # Test decision tree:
 tstdata <- subset(test_data, select = use_names)
 
