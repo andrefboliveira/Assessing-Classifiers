@@ -40,26 +40,30 @@ f <- as.formula(paste(paste(Y, "~"),
 credit_data_df$default.payment.next.month <- factor(credit_data_df$default.payment.next.month)
 
 # Splitting data into Testing and Training data set
-index <- 1:nrow(credit_data_df)
-trainindex <- sample(index, trunc(0.75*nrow(credit_data_df)))
-train <- na.omit(credit_data_df[trainindex,])
-test <- na.omit(credit_data_df[-trainindex,])
+perct_train <- 2/3
+train_index <- sample(1:nrow(credit_data_df), trunc(perct_train*nrow(credit_data_df)))
+train_data <- na.omit(credit_data_df[train_index,])
+test_data <- na.omit(credit_data_df[-train_index,])
+
+
 
 ## Train SVM with e1071:
-x <- subset(train, select = use_names)
-y <- train$default.payment.next.month
-model <- svm(x, y, type="C-classification", kernel="polynomial", cost=10)
+x <- subset(train_data, select = use_names)
+y <- train_data$default.payment.next.month
+# model <- svm(x, y, type="C-classification", kernel="polynomial", cost=10)
+model <- svm(x, y, type="C-classification", kernel="radial", cost=1000)
+
 print(model)
 summary(model)
 
 ## Test with test data
-xte <- subset(test, select = use_names)
+xte <- subset(test_data, select = use_names)
 pred <- cbind(predict(model, xte))
 ## (same as:)
 ##pred <- fitted(model)
 
 predres <- factor(pred)  ## pred in (1,2)
-cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
+cmpdata <- data.frame(actual=test_data$default.payment.next.month, predicted=predres)
 
 
 nerr <- count_err(cmpdata$actual,cmpdata$predicted)

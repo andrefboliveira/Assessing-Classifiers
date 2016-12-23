@@ -28,10 +28,12 @@ sapply(credit_data_df, function(x) sum(is.na(x)))
 
 
 # Splitting data into Testing and Training data set
-index <- 1:nrow(credit_data_df)
-trainindex <- sample(index, trunc(0.75*nrow(credit_data_df)))
-train <- na.omit(credit_data_df[trainindex,])
-test <- na.omit(credit_data_df[-trainindex,])
+perct_train <- 2/3
+
+train_index <- sample(1:nrow(credit_data_df), trunc(perct_train*nrow(credit_data_df)))
+train_data <- na.omit(credit_data_df[train_index,])
+test_data <- na.omit(credit_data_df[-train_index,])
+
 
 Y <- "default.payment.next.month"
 X <- "ID"
@@ -42,29 +44,29 @@ f <- as.formula(paste(paste(Y, "~"),
                       paste(use_names, collapse=" + ")))
 
 # Train decision tree:
-# model <- rpart(f, data = train)
-model <- rpart(f, data = train, method="anova", control=rpart.control(minsplit=2, minbucket=1, cp=0.001))
+model <- rpart(f, data = train_data, method="anova", control=rpart.control(minsplit=2, minbucket=1, cp=0.001))
 # minsplit: the minimum number of observations that must exist in a node in order for a split to be attempted.
 # minbucket: the minimum number of observations in any terminal <leaf> node.
 # cp: complexity parameter. Any split that does not decrease the overall lack of fit by a factor of cp is not attempted. 
 
-# printcp(model) # display the results 
-# plotcp(model) # visualize cross−validation results 
-# summary(model) # detailed summary of splits
+printcp(model) # display the results 
+plotcp(model) # visualize cross−validation results 
+summary(model) # detailed summary of splits
+
 # Plot the model
 plot(model, uniform = TRUE, branch = 0.6, margin = 0.05)
 text(model, use.n = TRUE)
 title("Default Payment Next Month")
 
-#plot(model, compress=TRUE)
-#text(model, use.n = TRUE)
+plot(model, compress=TRUE)
+text(model, use.n = TRUE)
 
 # Test decision tree:
-tstdata <- subset(test, select = use_names)
+tstdata <- subset(test_data, select = use_names)
 
 pred <- cbind(predict(model, tstdata))
 predres <-  apply(pred, MARGIN=2, FUN=unit_round)
-cmpdata <- data.frame(actual=test$default.payment.next.month, predicted=predres)
+cmpdata <- data.frame(actual=test_data$default.payment.next.month, predicted=predres)
 
 # Find percentage of (predicted) errors
 nerr <- count_err(cmpdata$actual, cmpdata$predicted)
