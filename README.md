@@ -7,8 +7,11 @@ R
 
 ## Details
 
-Apply Machine Learning classifiers to preditc credit card default.
-We have evaluated the results of Support Vector Machine (SVM), Multilayer Perceptron (MLP) and Decision Tree classifiers.
+Apply Machine Learning classifiers to predict credit card default.
+We have evaluated and compare the  results of three classifiers:
+- Support Vector Machine (SVM)
+- Multilayer Perceptron (MLP)
+- Decision Trees
 
 For more information, please check the [project description](./Enunciado%20e%20Artigo/Enunciado.pdf) and [final report](./Entrega/Relatório.pdf).
 
